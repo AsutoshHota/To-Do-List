@@ -1,0 +1,513 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do List</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>To-Do List</h1>
+        <nav>
+            <button id="registerBtn">Register</button>
+            <button id="loginBtn">Login</button>
+            <button id="logoutBtn" style="display:none;">Logout</button>
+        </nav>
+    </header>
+    
+    <main>
+        <div id="authModal" class="modal" style="display:none;">
+             <div class="modal-content">
+                <span class="close-modal">&times;</span>
+                <h2 id="authModalTitle"></h2>
+                 <form id="authForm">
+                    <input type="text" id="username" placeholder="Username" required>
+                    <input type="password" id="password" placeholder="Password" required>
+                    <button type="submit" id="authSubmitBtn"></button>
+                 </form>
+             </div>
+         </div>
+
+
+        <section id="taskSection" style="display:none;">
+            <div id="taskControls">
+                <input type="text" id="newTaskTitle" placeholder="New Task Title">
+                 <textarea id="newTaskDescription" placeholder="Task Description"></textarea>
+                 <input type="date" id="newTaskDueDate">
+                  <select id="newTaskPriority">
+                     <option value="low">Low</option>
+                      <option value="medium">Medium</option>
+                      <option value="high">High</option>
+                  </select>
+                  <select id="newTaskCategory">
+                   <option value="personal">Personal</option>
+                    <option value="work">Work</option>
+                     <option value="other">Other</option>
+                  </select>
+                <button id="addTaskBtn">Add Task</button>
+            </div>
+             <div id="filterControls">
+                 <select id="filterCategory">
+                 <option value="all">All Categories</option>
+                 <option value="personal">Personal</option>
+                 <option value="work">Work</option>
+                 <option value="other">Other</option>
+              </select>
+            <select id="filterStatus">
+               <option value="all">All Statuses</option>
+               <option value="pending">Pending</option>
+               <option value="inProgress">In Progress</option>
+                <option value="completed">Completed</option>
+              </select>
+              <select id="sortTasks">
+                   <option value="dueDate">Due Date</option>
+                    <option value="priority">Priority</option>
+                </select>
+            </div>
+             <ul id="taskList">
+                 <!-- Tasks will be added here -->
+            </ul>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 To-Do List App</p>
+    </footer>
+    <script src="script.js"></script>
+</body>
+</html>
+```
+
+```css
+body {
+    font-family: sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+    color: #333;
+}
+
+header {
+    background-color: #333;
+    color: white;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+nav button {
+    background-color: #555;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    cursor: pointer;
+    margin-left: 10px;
+    border-radius: 4px;
+}
+
+nav button:hover {
+    background-color: #777;
+}
+
+main {
+    padding: 20px;
+}
+
+#authModal {
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background-color: #fefefe;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 300px;
+    border-radius: 8px;
+    position: relative;
+
+}
+
+
+.close-modal {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.modal-content form {
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-content form input {
+    margin-bottom: 10px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.modal-content form button {
+    background-color: #5cb85c;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#taskControls {
+    margin-bottom: 20px;
+    display: flex;
+    gap:10px;
+    flex-wrap: wrap;
+    align-items:center;
+}
+
+#taskControls input, #taskControls select, #taskControls textarea {
+    padding: 8px;
+     border: 1px solid #ddd;
+    border-radius: 4px;
+}
+#taskControls button {
+    background-color: #5cb85c;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#filterControls {
+     margin-bottom: 10px;
+    display: flex;
+    gap: 10px;
+    flex-wrap:wrap;
+    align-items:center;
+}
+
+
+#filterControls select {
+     padding: 8px;
+     border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+#taskList {
+    list-style: none;
+    padding: 0;
+}
+
+#taskList li {
+    background-color: white;
+    padding: 15px;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 4px;
+}
+
+
+#taskList li > div {
+  flex-grow:1;
+}
+
+#taskList li button {
+    background-color: #d9534f;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    cursor: pointer;
+    border-radius: 4px;
+    margin-left: 5px;
+}
+#taskList li button.edit-btn{
+   background-color:#f0ad4e;
+   margin-right: 5px;
+}
+
+#taskList li button:hover {
+    background-color: #c9302c;
+}
+#taskList li button.edit-btn:hover {
+  background-color: #ec971f;
+}
+
+footer {
+    text-align: center;
+    padding: 10px;
+    background-color: #333;
+    color: white;
+    position:fixed;
+    width: 100%;
+    bottom:0;
+}
+```
+
+```javascript
+document.addEventListener('DOMContentLoaded', function() {
+    const registerBtn = document.getElementById('registerBtn');
+    const loginBtn = document.getElementById('loginBtn');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const authModal = document.getElementById('authModal');
+    const authModalTitle = document.getElementById('authModalTitle');
+    const authForm = document.getElementById('authForm');
+    const authSubmitBtn = document.getElementById('authSubmitBtn');
+    const closeAuthModal = document.querySelector('.close-modal');
+
+     const taskSection = document.getElementById('taskSection');
+     const taskList = document.getElementById('taskList');
+     const newTaskTitle = document.getElementById('newTaskTitle');
+      const newTaskDescription = document.getElementById('newTaskDescription');
+      const newTaskDueDate = document.getElementById('newTaskDueDate');
+       const newTaskPriority = document.getElementById('newTaskPriority');
+      const newTaskCategory = document.getElementById('newTaskCategory');
+      const addTaskBtn = document.getElementById('addTaskBtn');
+      const filterCategory = document.getElementById('filterCategory');
+     const filterStatus = document.getElementById('filterStatus');
+     const sortTasks = document.getElementById('sortTasks');
+
+
+    let tasks = [];
+    let loggedInUser = null;
+
+
+     // Function to generate a unique ID
+    function generateId() {
+        return Math.random().toString(36).substring(2, 15);
+    }
+
+  function updateUI(){
+      if(loggedInUser){
+          logoutBtn.style.display = 'inline-block';
+         registerBtn.style.display = 'none';
+         loginBtn.style.display = 'none';
+         taskSection.style.display = 'block';
+      } else {
+        logoutBtn.style.display = 'none';
+          registerBtn.style.display = 'inline-block';
+           loginBtn.style.display = 'inline-block';
+           taskSection.style.display = 'none';
+      }
+  }
+
+    function displayTasks() {
+         taskList.innerHTML = '';
+         const filteredTasks = filterTasks();
+
+        filteredTasks.forEach(task => {
+              const listItem = document.createElement('li');
+            listItem.innerHTML = `
+            <div>
+                <h3>${task.title}</h3>
+                 <p>${task.description}</p>
+                <p><strong>Due Date:</strong> ${task.dueDate} | <strong>Priority:</strong> ${task.priority} | <strong>Category:</strong> ${task.category} | <strong>Status:</strong> ${task.status}</p>
+            </div>
+             <div>
+             <button class="edit-btn" data-id="${task.id}">Edit</button>
+              <button class="delete-btn" data-id="${task.id}">Delete</button>
+              </div>
+            `;
+            taskList.appendChild(listItem);
+        });
+    }
+
+
+   function filterTasks() {
+        let filteredTasks = tasks;
+         const categoryFilter = filterCategory.value;
+         const statusFilter = filterStatus.value;
+
+       if (categoryFilter !== 'all') {
+            filteredTasks = filteredTasks.filter(task => task.category === categoryFilter);
+        }
+
+         if (statusFilter !== 'all') {
+             filteredTasks = filteredTasks.filter(task => task.status === statusFilter);
+        }
+        filteredTasks = sortAndFilterTasks(filteredTasks)
+         return filteredTasks;
+    }
+
+     function sortAndFilterTasks(tasksToSort) {
+          const sortValue = sortTasks.value;
+
+            if (sortValue === 'dueDate') {
+             tasksToSort.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
+            } else if (sortValue === 'priority') {
+             const priorityOrder = { low: 1, medium: 2, high: 3 };
+              tasksToSort.sort((a, b) => priorityOrder[a.priority] - priorityOrder[b.priority]);
+          }
+          return tasksToSort;
+     }
+
+
+      function saveTasks(){
+        localStorage.setItem('tasks', JSON.stringify(tasks))
+      }
+
+       function loadTasks(){
+          const storedTasks = localStorage.getItem('tasks');
+          if(storedTasks){
+             tasks = JSON.parse(storedTasks);
+              displayTasks();
+          }
+       }
+
+
+
+    // Event Listeners for UI actions
+    registerBtn.addEventListener('click', () => {
+        authModalTitle.textContent = 'Register';
+        authSubmitBtn.textContent = 'Register';
+        authModal.style.display = 'flex';
+        authForm.dataset.authType = 'register';
+
+    });
+
+    loginBtn.addEventListener('click', () => {
+         authModalTitle.textContent = 'Login';
+        authSubmitBtn.textContent = 'Login';
+        authModal.style.display = 'flex';
+        authForm.dataset.authType = 'login';
+    });
+    logoutBtn.addEventListener('click', () => {
+        loggedInUser = null;
+         localStorage.removeItem('loggedInUser')
+        updateUI();
+
+    });
+
+    closeAuthModal.addEventListener('click', () => {
+        authModal.style.display = 'none';
+    });
+    authModal.addEventListener('click', (event)=>{
+        if(event.target === authModal){
+            authModal.style.display='none';
+        }
+    });
+    authForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+         const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+         const authType = authForm.dataset.authType;
+
+          if(authType === 'register'){
+             localStorage.setItem(username, password);
+            alert('User Registered')
+              authModal.style.display = 'none';
+          }
+            else if(authType === 'login'){
+                 const storedPassword = localStorage.getItem(username);
+                 if(storedPassword && storedPassword === password){
+                     loggedInUser = username;
+                      localStorage.setItem('loggedInUser', username);
+                     alert('Logged in')
+                    authModal.style.display = 'none';
+                      updateUI();
+                      displayTasks();
+                 }
+                 else {
+                     alert('Invalid Credentials')
+                 }
+            }
+    });
+
+  addTaskBtn.addEventListener('click', ()=>{
+      const title = newTaskTitle.value.trim();
+         const description = newTaskDescription.value.trim();
+       const dueDate = newTaskDueDate.value;
+        const priority = newTaskPriority.value;
+          const category = newTaskCategory.value;
+          if(title){
+                const newTask = {
+                    id: generateId(),
+                    title,
+                    description,
+                    dueDate,
+                    priority,
+                    category,
+                    status: 'pending'
+                };
+                tasks.push(newTask);
+                saveTasks();
+                displayTasks();
+               newTaskTitle.value = '';
+              newTaskDescription.value = '';
+              newTaskDueDate.value ='';
+          } else {
+              alert('Title Required');
+          }
+  });
+
+     taskList.addEventListener('click', (event) => {
+          if(event.target.classList.contains('delete-btn')){
+              const taskId = event.target.dataset.id;
+               tasks = tasks.filter(task=>task.id !== taskId);
+              saveTasks();
+              displayTasks();
+          }
+        else  if(event.target.classList.contains('edit-btn')){
+               const taskId = event.target.dataset.id;
+                const taskToEdit = tasks.find(task=>task.id === taskId);
+               if(taskToEdit){
+                    const newTitle = prompt('Enter new title', taskToEdit.title);
+                   const newDescription = prompt('Enter new Description', taskToEdit.description)
+                     const newDueDate = prompt('Enter new due date',taskToEdit.dueDate)
+                      const newPriority = prompt('Enter new priority',taskToEdit.priority)
+                    const newCategory = prompt('Enter new Category', taskToEdit.category)
+                    const newStatus = prompt('Enter new status', taskToEdit.status);
+                   if(newTitle !== null && newTitle.trim() !== ''){
+                     taskToEdit.title = newTitle.trim();
+                   }
+                     if(newDescription !== null){
+                         taskToEdit.description = newDescription.trim();
+                     }
+                     if(newDueDate!==null){
+                         taskToEdit.dueDate = newDueDate.trim();
+                     }
+                    if(newPriority !== null){
+                        taskToEdit.priority = newPriority;
+                     }
+                       if(newCategory !==null){
+                         taskToEdit.category = newCategory;
+                     }
+                       if(newStatus !== null){
+                         taskToEdit.status = newStatus;
+                     }
+                     saveTasks();
+                     displayTasks();
+               }
+          }
+     });
+     filterCategory.addEventListener('change', displayTasks);
+    filterStatus.addEventListener('change', displayTasks);
+    sortTasks.addEventListener('change', displayTasks);
+
+
+
+     const storedUser = localStorage.getItem('loggedInUser')
+     if(storedUser){
+         loggedInUser = storedUser;
+     }
+    updateUI()
+   loadTasks();
+});
+```
