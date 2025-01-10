@@ -5,563 +5,492 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>To-Do List</title>
-    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        .container {
+            width: 80%;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1, h2 {
+            text-align: center;
+            color: #0056b3;
+        }
+         .auth-form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+
+         }
+        .auth-form input {
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            width: 200px;
+        }
+        .auth-form button {
+             padding: 10px 15px;
+             background-color: #0056b3;
+             color: white;
+             border: none;
+             border-radius: 4px;
+             cursor: pointer;
+        }
+
+        .task-form {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .task-form input, .task-form select, .task-form textarea {
+           padding: 8px;
+           border-radius: 4px;
+           border: 1px solid #ccc;
+        }
+
+        .task-form button {
+              padding: 8px 12px;
+              background-color: #28a745;
+              color: white;
+              border: none;
+              border-radius: 4px;
+              cursor: pointer;
+        }
+        .task-form button:disabled {
+             background-color: #ccc;
+             cursor: not-allowed;
+
+        }
+        .task-list {
+           list-style: none;
+           padding: 0;
+        }
+        .task-list li {
+            background-color: #f9f9f9;
+            padding: 10px;
+            margin-bottom: 5px;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+       .task-actions button {
+          padding: 5px 10px;
+          background-color: #dc3545;
+          color: white;
+          border: none;
+          border-radius: 4px;
+          cursor: pointer;
+          margin-left: 5px;
+        }
+       .task-actions button.edit {
+           background-color: #ffc107;
+           color: black;
+       }
+       .task-actions button.complete {
+          background-color: #28a745;
+       }
+       .filters {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+       .filters select {
+           padding: 8px;
+           border-radius: 4px;
+           border: 1px solid #ccc;
+       }
+       .notifications {
+           text-align: center;
+           margin-top: 20px;
+           color: red;
+       }
+      @media(max-width: 768px) {
+          .container {
+            width: 95%;
+          }
+          .task-form {
+             flex-direction: column;
+          }
+
+          .task-form input, .task-form select, .task-form textarea, .filters select {
+              width: 100%;
+              margin-bottom: 5px;
+          }
+          .task-list li {
+             flex-direction: column;
+             align-items: flex-start;
+             gap: 5px;
+          }
+           .task-actions {
+              align-self: flex-end;
+          }
+
+        }
+    </style>
 </head>
 <body>
-    <header>
+    <div class="container">
         <h1>To-Do List</h1>
-        <nav>
-            <button id="registerBtn">Register</button>
-            <button id="loginBtn">Login</button>
-            <button id="logoutBtn" style="display: none;">Logout</button> <!-- Hidden by default -->
-        </nav>
-    </header>
 
-    <main>
-        <div id="authForms" style="display: none;">
-            <div id="registerForm" style="display: none;">
-                <h2>Register</h2>
+        <!-- Authentication Section -->
+        <div id="authSection">
+            <h2>Authentication</h2>
+            <div class="auth-form" id="registerForm">
                 <input type="text" id="registerUsername" placeholder="Username" required>
                 <input type="password" id="registerPassword" placeholder="Password" required>
-                <button id="registerSubmit">Register</button>
-                <p id="registerMessage"></p>
+                <button id="registerButton">Register</button>
+                <p id="registerError" style="color:red"></p>
+
             </div>
-            <div id="loginForm" style="display: none;">
-                <h2>Login</h2>
+             <div class="auth-form" id="loginForm" style="display:none;">
                 <input type="text" id="loginUsername" placeholder="Username" required>
                 <input type="password" id="loginPassword" placeholder="Password" required>
-                <button id="loginSubmit">Login</button>
-                 <p id="loginMessage"></p>
-            </div>
-        </div>
-        
-        <section id="taskSection" style="display: none;"> <!-- Hidden until user logged in -->
-            <div id="addTaskDiv">
-                <h2>Add New Task</h2>
-                <input type="text" id="taskName" placeholder="Task Name" required><br>
-                <textarea id="taskDescription" placeholder="Description (optional)"></textarea><br>
-                 <select id="taskCategory">
-                    <option value="" disabled selected>Select Category</option>
-                    <option value="work">Work</option>
-                    <option value="personal">Personal</option>
-                    <option value="other">Other</option>
-                </select><br>
-                <input type="date" id="taskDueDate"><br>
-                <select id="taskPriority">
-                    <option value="" disabled selected>Select Priority</option>
-                    <option value="high">High</option>
-                    <option value="medium">Medium</option>
-                    <option value="low">Low</option>
-                </select><br>
-               
-                <button id="addTaskBtn">Add Task</button>
-            </div>
+                <button id="loginButton">Login</button>
+                  <p id="loginError" style="color:red"></p>
 
-            <div id="filterDiv">
-                <h2>Filter & Sort</h2>
-                    <select id="filterCategory">
-                        <option value="">All Categories</option>
-                        <option value="work">Work</option>
-                        <option value="personal">Personal</option>
-                        <option value="other">Other</option>
-                    </select>
-                     <select id="sortBy">
-                        <option value="dueDate">Sort by Due Date</option>
-                        <option value="priority">Sort by Priority</option>
-                    </select>
-                    <button id="applyFilter">Apply Filter</button>
+            </div>
+             <button id="toggleAuthForm">Switch to Login</button>
+        </div>
+
+
+        <!-- Task Management Section -->
+        <div id="taskSection" style="display:none;">
+            <h2>Add New Task</h2>
+            <form class="task-form" id="taskForm">
+                <input type="text" id="taskTitle" placeholder="Task Title" required>
+                <textarea id="taskDescription" placeholder="Description"></textarea>
+                <select id="taskCategory">
+                    <option value="Personal">Personal</option>
+                    <option value="Work">Work</option>
+                    <option value="Study">Study</option>
+                </select>
+                <input type="date" id="taskDueDate">
+                 <select id="taskPriority">
+                    <option value="Low">Low</option>
+                    <option value="Medium">Medium</option>
+                    <option value="High">High</option>
+                </select>
+                <button id="addTaskButton">Add Task</button>
+            </form>
+
+            <h2>Task List</h2>
+              <div class="filters">
+                  <select id="filterCategory">
+                    <option value="">All Categories</option>
+                    <option value="Personal">Personal</option>
+                    <option value="Work">Work</option>
+                    <option value="Study">Study</option>
+                </select>
+                  <select id="filterPriority">
+                    <option value="">All Priorities</option>
+                     <option value="Low">Low</option>
+                    <option value="Medium">Medium</option>
+                    <option value="High">High</option>
+                  </select>
+                  <select id="filterStatus">
+                    <option value="">All Statuses</option>
+                     <option value="Pending">Pending</option>
+                     <option value="In Progress">In Progress</option>
+                     <option value="Completed">Completed</option>
+                </select>
+
+                 <button id="clearFilters">Clear Filters</button>
              </div>
-
-            <div id="taskList">
-                <!-- Tasks will be displayed here -->
-            </div>
-        </section>
-
-         <div id="editTaskModal" style="display:none;">
-             <div class="modal-content">
-                <span class="close-modal">&times;</span>
-                <h2>Edit Task</h2>
-                <input type="hidden" id="editTaskId">
-                <input type="text" id="editTaskName" placeholder="Task Name" required><br>
-                <textarea id="editTaskDescription" placeholder="Description (optional)"></textarea><br>
-                 <select id="editTaskCategory">
-                    <option value="" disabled selected>Select Category</option>
-                    <option value="work">Work</option>
-                    <option value="personal">Personal</option>
-                    <option value="other">Other</option>
-                </select><br>
-                <input type="date" id="editTaskDueDate"><br>
-                <select id="editTaskPriority">
-                    <option value="" disabled selected>Select Priority</option>
-                    <option value="high">High</option>
-                    <option value="medium">Medium</option>
-                    <option value="low">Low</option>
-                </select><br>
-                <select id="editTaskStatus">
-                    <option value="pending">Pending</option>
-                    <option value="inProgress">In Progress</option>
-                    <option value="completed">Completed</option>
-                </select><br>
-                <button id="saveEditBtn">Save Changes</button>
-            </div>
+           <ul class="task-list" id="taskList"></ul>
         </div>
-    </main>
-    <script src="script.js"></script>
+
+        <div class="notifications" id="notificationArea"></div>
+    </div>
+
+    <script>
+        let tasks = [];
+        let currentUser = null;
+
+        const authSection = document.getElementById('authSection');
+        const registerForm = document.getElementById('registerForm');
+         const loginForm = document.getElementById('loginForm');
+        const taskSection = document.getElementById('taskSection');
+         const taskForm = document.getElementById('taskForm');
+         const taskList = document.getElementById('taskList');
+         const notificationArea = document.getElementById('notificationArea');
+        const filterCategory = document.getElementById('filterCategory');
+         const filterPriority = document.getElementById('filterPriority');
+          const filterStatus = document.getElementById('filterStatus');
+           const clearFilters = document.getElementById('clearFilters');
+        const toggleAuthFormButton = document.getElementById('toggleAuthForm');
+
+
+
+        function showNotification(message) {
+              notificationArea.textContent = message;
+               setTimeout(() => notificationArea.textContent = "", 5000)
+        }
+        function toggleAuthForm() {
+           const registerDisplay = registerForm.style.display === 'none';
+            registerForm.style.display = registerDisplay ? 'flex' : 'none';
+            loginForm.style.display = registerDisplay ? 'none' : 'flex';
+            toggleAuthFormButton.textContent = registerDisplay ? 'Switch to Register' : 'Switch to Login';
+
+        }
+       toggleAuthFormButton.addEventListener('click', toggleAuthForm);
+
+       function handleRegistration(event) {
+           event.preventDefault();
+            const username = document.getElementById('registerUsername').value;
+            const password = document.getElementById('registerPassword').value;
+             const registerError = document.getElementById('registerError');
+
+          if(!username || !password) {
+            registerError.textContent = "Please enter a username and password";
+              return;
+          }
+           if(localStorage.getItem(username)){
+             registerError.textContent = "Username already exists!";
+                return;
+           }
+
+
+           localStorage.setItem(username, password);
+            document.getElementById('registerUsername').value = "";
+            document.getElementById('registerPassword').value = "";
+           registerError.textContent = "";
+
+           showNotification("Registration successful! Please log in");
+            toggleAuthForm();
+
+
+       }
+
+         function handleLogin(event) {
+              event.preventDefault();
+              const username = document.getElementById('loginUsername').value;
+             const password = document.getElementById('loginPassword').value;
+              const loginError = document.getElementById('loginError');
+
+            if(!username || !password) {
+             loginError.textContent = "Please enter a username and password";
+              return;
+           }
+
+            const storedPassword = localStorage.getItem(username);
+            if(storedPassword !== password) {
+               loginError.textContent = "Invalid username or password";
+                 return;
+            }
+
+            currentUser = username;
+            loginError.textContent = "";
+           authSection.style.display = 'none';
+            taskSection.style.display = 'block';
+             showNotification("Logged in as " + currentUser);
+           loadTasks();
+
+
+         }
+
+       registerForm.querySelector('button').addEventListener('click', handleRegistration);
+        loginForm.querySelector('button').addEventListener('click', handleLogin);
+
+
+        function loadTasks() {
+            const storedTasks = localStorage.getItem(`tasks-${currentUser}`);
+            tasks = storedTasks ? JSON.parse(storedTasks) : [];
+            renderTasks();
+             checkNotifications();
+        }
+
+         function saveTasks() {
+            localStorage.setItem(`tasks-${currentUser}`, JSON.stringify(tasks));
+         }
+
+
+
+        function addTask(event) {
+            event.preventDefault();
+              const title = document.getElementById('taskTitle').value;
+             const description = document.getElementById('taskDescription').value;
+             const category = document.getElementById('taskCategory').value;
+             const dueDate = document.getElementById('taskDueDate').value;
+              const priority = document.getElementById('taskPriority').value;
+
+
+              const newTask = {
+                   id: Date.now(),
+                  title: title,
+                  description: description,
+                  category: category,
+                   dueDate: dueDate,
+                   priority: priority,
+                   status: "Pending"
+
+              };
+              tasks.push(newTask);
+              saveTasks();
+              renderTasks();
+             taskForm.reset();
+        }
+        taskForm.addEventListener('submit', addTask);
+
+        function renderTasks() {
+            taskList.innerHTML = '';
+           const filteredTasks = getFilteredTasks();
+
+           if(filteredTasks.length === 0) {
+             taskList.innerHTML = '<li> No tasks found.</li>';
+             return;
+           }
+
+           filteredTasks.forEach(task => {
+               const taskItem = document.createElement('li');
+                taskItem.innerHTML = `
+                    <span><strong>${task.title}</strong> - ${task.category} - ${task.priority}
+                    ${task.dueDate ? ' - Due: ' + new Date(task.dueDate).toLocaleDateString() : ''}
+                     - Status: ${task.status}
+                     ${task.description ? '<br><small>' + task.description + '</small>' : ''}
+                     </span>
+                    <div class="task-actions">
+                        <button class="edit" data-id="${task.id}">Edit</button>
+                         <button class="complete" data-id="${task.id}">Complete</button>
+                        <button data-id="${task.id}">Delete</button>
+                    </div>
+                `;
+                 taskList.appendChild(taskItem);
+           });
+
+
+        }
+
+        function editTask(id){
+             const taskIndex = tasks.findIndex(task => task.id === Number(id));
+              if(taskIndex === -1) { return; }
+
+
+              const task = tasks[taskIndex];
+                const title = prompt("Edit Task Title", task.title);
+                 const description = prompt("Edit Description", task.description);
+                 const category = prompt("Edit Category", task.category);
+                 const dueDate = prompt("Edit Due Date (YYYY-MM-DD)", task.dueDate);
+                const priority = prompt("Edit Priority", task.priority);
+
+
+                 if(title !== null && title.trim() !== '') {
+                     task.title = title;
+                    task.description = description;
+                     task.category = category;
+                     task.dueDate = dueDate;
+                    task.priority = priority;
+
+                     saveTasks();
+                     renderTasks();
+                 }
+
+
+        }
+
+        function completeTask(id) {
+          const taskIndex = tasks.findIndex(task => task.id === Number(id));
+          if(taskIndex === -1) {
+              return;
+           }
+            tasks[taskIndex].status = "Completed";
+              saveTasks();
+              renderTasks();
+        }
+
+        function deleteTask(id) {
+             const taskIndex = tasks.findIndex(task => task.id === Number(id));
+              if(taskIndex !== -1) {
+                 tasks.splice(taskIndex, 1);
+                 saveTasks();
+                 renderTasks();
+             }
+
+        }
+
+
+        taskList.addEventListener('click', (event) => {
+            if(event.target.tagName === 'BUTTON'){
+                const taskId = event.target.getAttribute('data-id');
+                 if(event.target.classList.contains('edit')) {
+                       editTask(taskId);
+
+                } else if (event.target.classList.contains('complete')){
+                       completeTask(taskId);
+                }
+                else {
+                    deleteTask(taskId);
+                }
+
+            }
+
+        });
+
+    function getFilteredTasks() {
+       let filteredTasks = [...tasks];
+         if(filterCategory.value){
+             filteredTasks = filteredTasks.filter(task => task.category === filterCategory.value);
+         }
+        if (filterPriority.value) {
+           filteredTasks = filteredTasks.filter(task => task.priority === filterPriority.value);
+        }
+        if(filterStatus.value) {
+            filteredTasks = filteredTasks.filter(task => task.status === filterStatus.value);
+        }
+           return filteredTasks;
+
+    }
+
+    function handleFilterChange() {
+          renderTasks();
+    }
+
+    filterCategory.addEventListener('change', handleFilterChange);
+    filterPriority.addEventListener('change', handleFilterChange);
+     filterStatus.addEventListener('change', handleFilterChange);
+
+     clearFilters.addEventListener('click', () => {
+       filterCategory.value = "";
+        filterPriority.value = "";
+        filterStatus.value = "";
+        renderTasks();
+     })
+
+    function checkNotifications() {
+        const now = new Date();
+        tasks.forEach(task => {
+           if(task.dueDate) {
+              const dueDate = new Date(task.dueDate);
+               const timeDiff = dueDate.getTime() - now.getTime();
+              const daysLeft = Math.ceil(timeDiff / (1000 * 3600 * 24));
+
+               if(daysLeft === 0) {
+                   showNotification(`Task ${task.title} is due today`);
+               }else if (daysLeft < 0 ) {
+                     showNotification(`Task ${task.title} is overdue!`);
+               }
+                else if (daysLeft <= 2){
+                     showNotification(`Task ${task.title} is due in ${daysLeft} days`);
+
+                }
+           }
+
+        });
+    }
+
+
+    </script>
 </body>
 </html>
-```
-
-```css
-/* style.css */
-body {
-    font-family: sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f4f4f4;
-    color: #333;
-}
-
-header {
-    background: #5cb85c;
-    color: white;
-    padding: 1em;
-    text-align: center;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-header h1 {
-    margin: 0;
-}
-
-header nav button {
-    margin-left: 10px;
-    padding: 8px 15px;
-    background-color: white;
-    border: none;
-    cursor: pointer;
-    border-radius: 5px;
-}
-
-main {
-    padding: 20px;
-}
-
-#authForms, #taskSection {
-    background-color: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    margin-bottom: 20px;
-}
-
-#authForms div {
-    margin-bottom: 15px;
-}
-
-#authForms input, #addTaskDiv input, #addTaskDiv textarea, #addTaskDiv select,
-#filterDiv select, #editTaskModal input, #editTaskModal textarea, #editTaskModal select{
-    margin-bottom: 10px;
-    padding: 8px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    width: calc(100% - 22px); /* Adjust for padding and border */
-}
-
-#authForms button, #addTaskDiv button, #filterDiv button, #editTaskModal button {
-    padding: 10px 15px;
-    background-color: #5cb85c;
-    color: white;
-    border: none;
-    cursor: pointer;
-    border-radius: 5px;
-}
-#authForms button:hover, #addTaskDiv button:hover, #filterDiv button:hover, #editTaskModal button:hover{
-    background-color: #4cae4c;
-}
-
-#taskList {
-    padding: 10px;
-}
-
-.task-item {
-    background-color: #f9f9f9;
-    padding: 15px;
-    border-radius: 5px;
-    margin-bottom: 10px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.task-item .task-details {
-    flex: 1;
-    margin-right: 10px;
-}
-
-.task-item .task-actions button {
-    margin-left: 5px;
-    padding: 5px 10px;
-    background-color: #d9534f;
-    color: white;
-    border: none;
-    cursor: pointer;
-    border-radius: 3px;
-}
-.task-item .task-actions button:hover{
-    background-color:#c9302c;
-}
-
-/* Modal Styles */
-#editTaskModal {
-    display: none;
-    position: fixed;
-    z-index: 1;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgba(0,0,0,0.4);
-}
-.modal-content {
-    background-color: #fefefe;
-    margin: 15% auto;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%;
-}
-.close-modal {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-    cursor: pointer;
-}
-.close-modal:hover,
-.close-modal:focus {
-    color: black;
-    text-decoration: none;
-    cursor: pointer;
-}
-
-/* Responsive Design */
-@media (max-width: 600px) {
-    header {
-        flex-direction: column;
-    }
-    header nav {
-        margin-top: 10px;
-    }
-    header nav button {
-        margin-left: 0;
-        margin-right: 5px;
-    }
-
-    .task-item {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .task-item .task-details {
-        margin-right: 0;
-        margin-bottom: 10px;
-    }
-
-    .task-item .task-actions button {
-        margin-left: 0;
-        margin-right: 5px;
-        margin-bottom: 5px;
-    }
-    .modal-content {
-    width: 90%;
-    }
-}
-```
-```javascript
-// script.js
-document.addEventListener('DOMContentLoaded', () => {
-    const registerBtn = document.getElementById('registerBtn');
-    const loginBtn = document.getElementById('loginBtn');
-    const logoutBtn = document.getElementById('logoutBtn');
-    const authForms = document.getElementById('authForms');
-    const registerForm = document.getElementById('registerForm');
-    const loginForm = document.getElementById('loginForm');
-    const registerSubmit = document.getElementById('registerSubmit');
-    const loginSubmit = document.getElementById('loginSubmit');
-    const taskSection = document.getElementById('taskSection');
-    const registerMessage = document.getElementById('registerMessage');
-    const loginMessage = document.getElementById('loginMessage');
-
-     const addTaskBtn = document.getElementById('addTaskBtn');
-     const taskList = document.getElementById('taskList');
-     const applyFilterBtn = document.getElementById('applyFilter');
-
-      const editTaskModal = document.getElementById('editTaskModal');
-    const closeModalBtn = document.querySelector('.close-modal');
-    const saveEditBtn = document.getElementById('saveEditBtn');
-
-      let currentUser = localStorage.getItem('currentUser') ? JSON.parse(localStorage.getItem('currentUser')) : null;
-    let tasks = localStorage.getItem('tasks') ? JSON.parse(localStorage.getItem('tasks')) : [];
-    const users = localStorage.getItem('users') ? JSON.parse(localStorage.getItem('users')) : [];
-
-
-      // Function to update UI based on login status
-    const updateUI = () => {
-        if (currentUser) {
-           authForms.style.display = 'none';
-            taskSection.style.display = 'block';
-             logoutBtn.style.display = 'inline-block';
-             registerBtn.style.display = 'none';
-             loginBtn.style.display = 'none';
-            displayTasks();
-        } else {
-            authForms.style.display = 'block';
-             taskSection.style.display = 'none';
-             logoutBtn.style.display = 'none';
-              registerBtn.style.display = 'inline-block';
-             loginBtn.style.display = 'inline-block';
-             registerForm.style.display = 'none';
-            loginForm.style.display = 'none';
-        }
-    };
-
-    updateUI(); // Initial UI update
-
-
-    registerBtn.addEventListener('click', () => {
-        registerForm.style.display = 'block';
-        loginForm.style.display = 'none';
-
-    });
-
-     loginBtn.addEventListener('click', () => {
-        loginForm.style.display = 'block';
-        registerForm.style.display = 'none';
-    });
-
-       logoutBtn.addEventListener('click', () => {
-        currentUser = null;
-        localStorage.removeItem('currentUser');
-        updateUI();
-    });
-
-
-
-    registerSubmit.addEventListener('click', (e) => {
-         e.preventDefault();
-        const username = document.getElementById('registerUsername').value;
-        const password = document.getElementById('registerPassword').value;
-
-        if (!username || !password) {
-             registerMessage.textContent = 'Please enter all details.';
-            return;
-        }
-
-        if (users.some(user => user.username === username)) {
-            registerMessage.textContent = 'Username already exists.';
-            return;
-        }
-        const newUser = { username, password };
-        users.push(newUser);
-         localStorage.setItem('users', JSON.stringify(users));
-          registerMessage.textContent = 'Registration successful. Please login.';
-           document.getElementById('registerUsername').value = '';
-          document.getElementById('registerPassword').value = '';
-         setTimeout(()=> registerMessage.textContent ='',3000)
-
-    });
-
-
-    loginSubmit.addEventListener('click', (e) => {
-         e.preventDefault();
-        const username = document.getElementById('loginUsername').value;
-        const password = document.getElementById('loginPassword').value;
-
-         const user = users.find(user => user.username === username && user.password === password);
-
-        if (user) {
-            currentUser = { username: user.username };
-            localStorage.setItem('currentUser', JSON.stringify(currentUser));
-             loginMessage.textContent = 'Login successful';
-            updateUI();
-
-        } else {
-            loginMessage.textContent = 'Invalid credentials. Please try again.';
-        }
-          setTimeout(()=> loginMessage.textContent ='',3000)
-    });
-
-
-   addTaskBtn.addEventListener('click', () => {
-        const taskName = document.getElementById('taskName').value;
-        const taskDescription = document.getElementById('taskDescription').value;
-        const taskCategory = document.getElementById('taskCategory').value;
-        const taskDueDate = document.getElementById('taskDueDate').value;
-        const taskPriority = document.getElementById('taskPriority').value;
-         if (!taskName || !taskCategory || !taskPriority) {
-                alert("Please fill all mandatory fields: task name, category and priority.");
-                return;
-            }
-
-
-            const newTask = {
-                id: Date.now(),
-                name: taskName,
-                description: taskDescription,
-                category: taskCategory,
-                dueDate: taskDueDate,
-                priority: taskPriority,
-                status: 'pending',
-                username: currentUser.username
-            };
-
-             tasks.push(newTask);
-             localStorage.setItem('tasks', JSON.stringify(tasks));
-             displayTasks();
-             clearAddTaskForm();
-
-    });
-
-    function clearAddTaskForm() {
-        document.getElementById('taskName').value = '';
-        document.getElementById('taskDescription').value = '';
-        document.getElementById('taskCategory').value = '';
-        document.getElementById('taskDueDate').value = '';
-        document.getElementById('taskPriority').value = '';
-    }
-
-     function displayTasks() {
-           taskList.innerHTML = '';
-           const filteredTasks = filterTasks();
-
-          if (filteredTasks.length === 0) {
-                taskList.innerHTML = '<p>No tasks available.</p>';
-                return;
-            }
-
-
-            filteredTasks.forEach(task => {
-                const taskItem = document.createElement('div');
-                taskItem.classList.add('task-item');
-
-                 const taskDetails = document.createElement('div');
-                taskDetails.classList.add('task-details');
-                taskDetails.innerHTML = `
-                <h3>${task.name}</h3>
-                <p><strong>Description:</strong> ${task.description || 'N/A'}</p>
-                <p><strong>Category:</strong> ${task.category}</p>
-                <p><strong>Due Date:</strong> ${task.dueDate || 'N/A'}</p>
-                <p><strong>Priority:</strong> ${task.priority}</p>
-                <p><strong>Status:</strong> ${task.status}</p>
-                `;
-                taskItem.appendChild(taskDetails)
-
-                const taskActions = document.createElement('div');
-                 taskActions.classList.add('task-actions');
-
-                const editButton = document.createElement('button');
-                editButton.textContent = 'Edit';
-                editButton.addEventListener('click', () => openEditModal(task.id));
-                taskActions.appendChild(editButton);
-
-                const deleteButton = document.createElement('button');
-                deleteButton.textContent = 'Delete';
-                deleteButton.addEventListener('click', () => deleteTask(task.id));
-                taskActions.appendChild(deleteButton);
-                  taskItem.appendChild(taskActions)
-
-                taskList.appendChild(taskItem);
-            });
-    }
-
-
-     function filterTasks() {
-            const selectedCategory = document.getElementById('filterCategory').value;
-            const sortBy = document.getElementById('sortBy').value;
-
-            let filteredTasks = tasks.filter(task => task.username === currentUser.username);
-
-             if (selectedCategory) {
-                 filteredTasks = filteredTasks.filter(task => task.category === selectedCategory);
-             }
-
-             filteredTasks.sort((a, b) => {
-                if (sortBy === 'dueDate') {
-                    const dateA = a.dueDate ? new Date(a.dueDate) : new Date(0);
-                    const dateB = b.dueDate ? new Date(b.dueDate) : new Date(0);
-                    return dateA - dateB;
-
-                } else if (sortBy === 'priority') {
-                        const priorities = { 'high': 1, 'medium': 2, 'low': 3 };
-                        return priorities[a.priority] - priorities[b.priority];
-                }
-                 return 0;
-             });
-             return filteredTasks;
-    }
-
-     applyFilterBtn.addEventListener('click', displayTasks);
-
-
-
-       function deleteTask(taskId) {
-            tasks = tasks.filter(task => task.id !== taskId);
-            localStorage.setItem('tasks', JSON.stringify(tasks));
-            displayTasks();
-        }
-
-
-     function openEditModal(taskId) {
-            const task = tasks.find(task => task.id === taskId);
-            if (task) {
-                document.getElementById('editTaskId').value = task.id;
-                document.getElementById('editTaskName').value = task.name;
-                document.getElementById('editTaskDescription').value = task.description;
-                document.getElementById('editTaskCategory').value = task.category;
-                document.getElementById('editTaskDueDate').value = task.dueDate;
-                document.getElementById('editTaskPriority').value = task.priority;
-                document.getElementById('editTaskStatus').value = task.status;
-                editTaskModal.style.display = 'block';
-            }
-        }
-
-
-    closeModalBtn.addEventListener('click', () => {
-             editTaskModal.style.display = 'none';
-    });
-
-    window.addEventListener('click', (event) => {
-             if (event.target === editTaskModal) {
-                   editTaskModal.style.display = 'none';
-             }
-     });
-
-
-  saveEditBtn.addEventListener('click', () => {
-        const taskId = parseInt(document.getElementById('editTaskId').value);
-        const taskIndex = tasks.findIndex(task => task.id === taskId);
-
-        if (taskIndex !== -1) {
-              tasks[taskIndex] = {
-                ...tasks[taskIndex],
-                name: document.getElementById('editTaskName').value,
-                description: document.getElementById('editTaskDescription').value,
-                category: document.getElementById('editTaskCategory').value,
-                dueDate: document.getElementById('editTaskDueDate').value,
-                priority: document.getElementById('editTaskPriority').value,
-                status: document.getElementById('editTaskStatus').value
-            };
-
-            localStorage.setItem('tasks', JSON.stringify(tasks));
-            displayTasks();
-            editTaskModal.style.display = 'none';
-         }
-    });
-
-    // Initial display of tasks
-
-});
-
 ```
