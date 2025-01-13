@@ -1,4 +1,4 @@
-
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -19,64 +19,37 @@
             background-color: #fff;
             padding: 20px;
             border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         h1, h2 {
             text-align: center;
-            color: #0056b3;
+            color: #333;
         }
-         .auth-form {
+        form {
             display: flex;
             flex-direction: column;
-            align-items: center;
-            gap: 10px;
             margin-bottom: 20px;
-
-         }
-        .auth-form input {
-            padding: 10px;
+        }
+        form input, form textarea, form select, form button {
+            margin-bottom: 10px;
+            padding: 8px;
+            border: 1px solid #ddd;
             border-radius: 4px;
-            border: 1px solid #ccc;
-            width: 200px;
         }
-        .auth-form button {
-             padding: 10px 15px;
-             background-color: #0056b3;
-             color: white;
-             border: none;
-             border-radius: 4px;
-             cursor: pointer;
+        form button {
+            background-color: #5cb85c;
+            color: white;
+            border: none;
+            cursor: pointer;
         }
-
-        .task-form {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        .task-form input, .task-form select, .task-form textarea {
-           padding: 8px;
-           border-radius: 4px;
-           border: 1px solid #ccc;
-        }
-
-        .task-form button {
-              padding: 8px 12px;
-              background-color: #28a745;
-              color: white;
-              border: none;
-              border-radius: 4px;
-              cursor: pointer;
-        }
-        .task-form button:disabled {
-             background-color: #ccc;
-             cursor: not-allowed;
-
+        form button:hover {
+            background-color: #4cae4c;
         }
         .task-list {
-           list-style: none;
-           padding: 0;
+            list-style: none;
+            padding: 0;
         }
-        .task-list li {
+        .task-item {
             background-color: #f9f9f9;
             padding: 10px;
             margin-bottom: 5px;
@@ -85,411 +58,401 @@
             justify-content: space-between;
             align-items: center;
         }
-       .task-actions button {
-          padding: 5px 10px;
-          background-color: #dc3545;
-          color: white;
-          border: none;
-          border-radius: 4px;
-          cursor: pointer;
-          margin-left: 5px;
-        }
-       .task-actions button.edit {
-           background-color: #ffc107;
-           color: black;
-       }
-       .task-actions button.complete {
-          background-color: #28a745;
-       }
-       .filters {
+        .task-item .task-actions {
             display: flex;
-            gap: 10px;
+        }
+        .task-item .task-actions button {
+            background-color: #d9534f;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin-left: 5px;
+            padding: 5px 8px;
+            border-radius: 4px;
+        }
+         .task-item .task-actions button.edit-btn {
+            background-color: #5bc0de;
+        }
+        .task-item .task-actions button:hover {
+            opacity: 0.8;
+        }
+        .filters {
+            display: flex;
+            justify-content: space-around;
             margin-bottom: 20px;
         }
-       .filters select {
-           padding: 8px;
-           border-radius: 4px;
-           border: 1px solid #ccc;
-       }
-       .notifications {
-           text-align: center;
-           margin-top: 20px;
-           color: red;
-       }
-      @media(max-width: 768px) {
-          .container {
-            width: 95%;
-          }
-          .task-form {
-             flex-direction: column;
-          }
+        .filters select {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .auth-form {
+            display: flex;
+            flex-direction: column;
+            width: 300px;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .auth-form button {
+             background-color: #5cb85c;
+            color: white;
+            border: none;
+            cursor: pointer;
+             padding: 8px;
+            border-radius: 4px;
+        }
+        .auth-form button:hover {
+            background-color: #4cae4c;
+        }
 
-          .task-form input, .task-form select, .task-form textarea, .filters select {
-              width: 100%;
-              margin-bottom: 5px;
-          }
-          .task-list li {
-             flex-direction: column;
-             align-items: flex-start;
-             gap: 5px;
-          }
-           .task-actions {
-              align-self: flex-end;
-          }
-
+        .error-message {
+            color: red;
+            margin-top: 5px;
+        }
+        .success-message{
+             color: green;
+             margin-top: 5px;
+        }
+        .auth-buttons {
+            text-align: center;
+            margin-top: 10px;
+        }
+         .auth-buttons button {
+             background-color: #337ab7;
+             color: white;
+             border: none;
+             cursor: pointer;
+             padding: 8px 12px;
+             border-radius: 4px;
+         }
+        .auth-buttons button:hover{
+            background-color:#23527c;
+        }
+        @media (max-width: 768px) {
+             .container, .auth-form {
+                width: 95%;
+             }
+             .filters {
+                 flex-direction: column;
+                 align-items: center;
+             }
+            .filters select{
+                margin-bottom: 10px;
+                 width: 100%;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>To-Do List</h1>
+        <div id="auth-section">
+          <h2>Authentication</h2>
+            <div id="auth-status">Not Logged In</div>
+             <div id="auth-buttons" class="auth-buttons">
+                 <button onclick="toggleForm('login')">Login</button>
+                  <button onclick="toggleForm('register')">Register</button>
+             </div>
+              <div id="login-form" class="auth-form" style="display: none">
+                   <h2>Login</h2>
+                    <input type="text" placeholder="Username" id="login-username">
+                    <input type="password" placeholder="Password" id="login-password">
+                    <button onclick="loginUser()">Login</button>
+                   <div id="login-error" class="error-message"></div>
+                 </div>
+             <div id="register-form" class="auth-form" style="display: none">
+                    <h2>Register</h2>
+                     <input type="text" placeholder="Username" id="register-username">
+                     <input type="password" placeholder="Password" id="register-password">
+                     <button onclick="registerUser()">Register</button>
+                     <div id="register-error" class="error-message"></div>
+                     <div id="register-success" class="success-message"></div>
+             </div>
 
-        <!-- Authentication Section -->
-        <div id="authSection">
-            <h2>Authentication</h2>
-            <div class="auth-form" id="registerForm">
-                <input type="text" id="registerUsername" placeholder="Username" required>
-                <input type="password" id="registerPassword" placeholder="Password" required>
-                <button id="registerButton">Register</button>
-                <p id="registerError" style="color:red"></p>
-
-            </div>
-             <div class="auth-form" id="loginForm" style="display:none;">
-                <input type="text" id="loginUsername" placeholder="Username" required>
-                <input type="password" id="loginPassword" placeholder="Password" required>
-                <button id="loginButton">Login</button>
-                  <p id="loginError" style="color:red"></p>
-
-            </div>
-             <button id="toggleAuthForm">Switch to Login</button>
         </div>
-
-
-        <!-- Task Management Section -->
-        <div id="taskSection" style="display:none;">
-            <h2>Add New Task</h2>
-            <form class="task-form" id="taskForm">
-                <input type="text" id="taskTitle" placeholder="Task Title" required>
-                <textarea id="taskDescription" placeholder="Description"></textarea>
-                <select id="taskCategory">
-                    <option value="Personal">Personal</option>
-                    <option value="Work">Work</option>
-                    <option value="Study">Study</option>
+        <div id="todo-app" style="display: none;">
+         <h2>Add New Task</h2>
+            <form id="task-form">
+                <input type="text" id="task-title" placeholder="Task Title" required>
+                <textarea id="task-description" placeholder="Description (Optional)"></textarea>
+                <input type="date" id="task-dueDate">
+                <select id="task-priority">
+                    <option value="low">Low</option>
+                    <option value="medium">Medium</option>
+                    <option value="high">High</option>
                 </select>
-                <input type="date" id="taskDueDate">
-                 <select id="taskPriority">
-                    <option value="Low">Low</option>
-                    <option value="Medium">Medium</option>
-                    <option value="High">High</option>
+                <select id="task-category">
+                    <option value="personal">Personal</option>
+                    <option value="work">Work</option>
+                    <option value="other">Other</option>
                 </select>
-                <button id="addTaskButton">Add Task</button>
+                <button type="submit">Add Task</button>
             </form>
 
-            <h2>Task List</h2>
-              <div class="filters">
-                  <select id="filterCategory">
-                    <option value="">All Categories</option>
-                    <option value="Personal">Personal</option>
-                    <option value="Work">Work</option>
-                    <option value="Study">Study</option>
+            <div class="filters">
+                <select id="filter-category">
+                   <option value="">Filter by Category</option>
+                    <option value="personal">Personal</option>
+                    <option value="work">Work</option>
+                    <option value="other">Other</option>
                 </select>
-                  <select id="filterPriority">
-                    <option value="">All Priorities</option>
-                     <option value="Low">Low</option>
-                    <option value="Medium">Medium</option>
-                    <option value="High">High</option>
-                  </select>
-                  <select id="filterStatus">
-                    <option value="">All Statuses</option>
-                     <option value="Pending">Pending</option>
-                     <option value="In Progress">In Progress</option>
-                     <option value="Completed">Completed</option>
+                <select id="filter-priority">
+                     <option value="">Filter by Priority</option>
+                    <option value="low">Low</option>
+                    <option value="medium">Medium</option>
+                    <option value="high">High</option>
                 </select>
+                <select id="sort-by">
+                  <option value="">Sort By</option>
+                     <option value="dueDate">Due Date</option>
+                    <option value="priority">Priority</option>
+                </select>
+            </div>
 
-                 <button id="clearFilters">Clear Filters</button>
-             </div>
-           <ul class="task-list" id="taskList"></ul>
-        </div>
 
-        <div class="notifications" id="notificationArea"></div>
+            <h2>Tasks</h2>
+            <ul id="task-list" class="task-list">
+            </ul>
+         </div>
     </div>
-
     <script>
-        let tasks = [];
-        let currentUser = null;
+      let tasks = [];
+       let loggedInUser = null;
 
-        const authSection = document.getElementById('authSection');
-        const registerForm = document.getElementById('registerForm');
-         const loginForm = document.getElementById('loginForm');
-        const taskSection = document.getElementById('taskSection');
-         const taskForm = document.getElementById('taskForm');
-         const taskList = document.getElementById('taskList');
-         const notificationArea = document.getElementById('notificationArea');
-        const filterCategory = document.getElementById('filterCategory');
-         const filterPriority = document.getElementById('filterPriority');
-          const filterStatus = document.getElementById('filterStatus');
-           const clearFilters = document.getElementById('clearFilters');
-        const toggleAuthFormButton = document.getElementById('toggleAuthForm');
+      document.addEventListener('DOMContentLoaded', function() {
+
+            const authStatusDiv = document.getElementById('auth-status');
+            const authSectionDiv = document.getElementById('auth-section');
+            const todoAppDiv = document.getElementById('todo-app');
+
+            // Check if there's a logged-in user in local storage on load
+            const storedUser = localStorage.getItem('loggedInUser');
+            if (storedUser) {
+                loggedInUser = JSON.parse(storedUser);
+                authStatusDiv.textContent = 'Logged in as: ' + loggedInUser.username;
+               authSectionDiv.style.display = 'none';
+               todoAppDiv.style.display = 'block';
+                loadTasks();
+            }
+      });
 
 
+      function toggleForm(formId) {
+            const loginForm = document.getElementById('login-form');
+            const registerForm = document.getElementById('register-form');
+             const loginErrorDiv = document.getElementById('login-error');
+            const registerErrorDiv = document.getElementById('register-error');
+             const registerSuccessDiv = document.getElementById('register-success');
 
-        function showNotification(message) {
-              notificationArea.textContent = message;
-               setTimeout(() => notificationArea.textContent = "", 5000)
+
+            loginForm.style.display = (formId === 'login') ? 'block' : 'none';
+            registerForm.style.display = (formId === 'register') ? 'block' : 'none';
+            loginErrorDiv.textContent = "";
+             registerErrorDiv.textContent = "";
+             registerSuccessDiv.textContent = "";
         }
-        function toggleAuthForm() {
-           const registerDisplay = registerForm.style.display === 'none';
-            registerForm.style.display = registerDisplay ? 'flex' : 'none';
-            loginForm.style.display = registerDisplay ? 'none' : 'flex';
-            toggleAuthFormButton.textContent = registerDisplay ? 'Switch to Register' : 'Switch to Login';
 
-        }
-       toggleAuthFormButton.addEventListener('click', toggleAuthForm);
+        function registerUser() {
+             const registerUsernameInput = document.getElementById('register-username');
+             const registerPasswordInput = document.getElementById('register-password');
+              const registerErrorDiv = document.getElementById('register-error');
+              const registerSuccessDiv = document.getElementById('register-success');
 
-       function handleRegistration(event) {
-           event.preventDefault();
-            const username = document.getElementById('registerUsername').value;
-            const password = document.getElementById('registerPassword').value;
-             const registerError = document.getElementById('registerError');
+            const username = registerUsernameInput.value;
+            const password = registerPasswordInput.value;
 
-          if(!username || !password) {
-            registerError.textContent = "Please enter a username and password";
-              return;
-          }
-           if(localStorage.getItem(username)){
-             registerError.textContent = "Username already exists!";
+            if(!username || !password){
+                registerErrorDiv.textContent ="Username and password are required";
                 return;
-           }
-
-
-           localStorage.setItem(username, password);
-            document.getElementById('registerUsername').value = "";
-            document.getElementById('registerPassword').value = "";
-           registerError.textContent = "";
-
-           showNotification("Registration successful! Please log in");
-            toggleAuthForm();
-
-
-       }
-
-         function handleLogin(event) {
-              event.preventDefault();
-              const username = document.getElementById('loginUsername').value;
-             const password = document.getElementById('loginPassword').value;
-              const loginError = document.getElementById('loginError');
-
-            if(!username || !password) {
-             loginError.textContent = "Please enter a username and password";
-              return;
-           }
-
-            const storedPassword = localStorage.getItem(username);
-            if(storedPassword !== password) {
-               loginError.textContent = "Invalid username or password";
-                 return;
             }
 
-            currentUser = username;
-            loginError.textContent = "";
-           authSection.style.display = 'none';
-            taskSection.style.display = 'block';
-             showNotification("Logged in as " + currentUser);
-           loadTasks();
+            // Check if username already exists (for simplicity, only checking in local storage).
+              const existingUsers = JSON.parse(localStorage.getItem('users') || '[]');
+            if (existingUsers.some(user => user.username === username)) {
+               registerErrorDiv.textContent ="Username already exists";
+                return;
+            }
+
+            const newUser = { username: username, password: password };
+           existingUsers.push(newUser);
+           localStorage.setItem('users', JSON.stringify(existingUsers));
+            registerSuccessDiv.textContent = "Registration successful! You can now log in.";
+            registerUsernameInput.value = "";
+            registerPasswordInput.value = "";
 
 
-         }
-
-       registerForm.querySelector('button').addEventListener('click', handleRegistration);
-        loginForm.querySelector('button').addEventListener('click', handleLogin);
-
-
-        function loadTasks() {
-            const storedTasks = localStorage.getItem(`tasks-${currentUser}`);
-            tasks = storedTasks ? JSON.parse(storedTasks) : [];
-            renderTasks();
-             checkNotifications();
         }
 
-         function saveTasks() {
-            localStorage.setItem(`tasks-${currentUser}`, JSON.stringify(tasks));
-         }
+        function loginUser() {
+              const loginUsernameInput = document.getElementById('login-username');
+             const loginPasswordInput = document.getElementById('login-password');
+               const loginErrorDiv = document.getElementById('login-error');
+             const authStatusDiv = document.getElementById('auth-status');
+             const authSectionDiv = document.getElementById('auth-section');
+              const todoAppDiv = document.getElementById('todo-app');
+             const username = loginUsernameInput.value;
+             const password = loginPasswordInput.value;
+
+             if(!username || !password){
+                loginErrorDiv.textContent ="Username and password are required";
+                return;
+            }
+
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            const user = users.find(user => user.username === username && user.password === password);
+
+            if (user) {
+                loggedInUser = user;
+                localStorage.setItem('loggedInUser', JSON.stringify(loggedInUser));
+                authStatusDiv.textContent = 'Logged in as: ' + loggedInUser.username;
+                loginErrorDiv.textContent="";
+                authSectionDiv.style.display = 'none';
+                 todoAppDiv.style.display = 'block';
+                  loadTasks();
+            }else {
+               loginErrorDiv.textContent = "Invalid username or password.";
+            }
+             loginUsernameInput.value = "";
+            loginPasswordInput.value = "";
+        }
 
 
-
-        function addTask(event) {
-            event.preventDefault();
-              const title = document.getElementById('taskTitle').value;
-             const description = document.getElementById('taskDescription').value;
-             const category = document.getElementById('taskCategory').value;
-             const dueDate = document.getElementById('taskDueDate').value;
-              const priority = document.getElementById('taskPriority').value;
-
-
-              const newTask = {
-                   id: Date.now(),
-                  title: title,
-                  description: description,
-                  category: category,
-                   dueDate: dueDate,
-                   priority: priority,
-                   status: "Pending"
-
-              };
-              tasks.push(newTask);
+      document.getElementById('task-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const taskTitle = document.getElementById('task-title').value;
+            const taskDescription = document.getElementById('task-description').value;
+            const taskDueDate = document.getElementById('task-dueDate').value;
+            const taskPriority = document.getElementById('task-priority').value;
+            const taskCategory = document.getElementById('task-category').value;
+            const newTask = {
+                id: Date.now(),
+                title: taskTitle,
+                description: taskDescription,
+                dueDate: taskDueDate,
+                priority: taskPriority,
+                 category: taskCategory,
+                status: 'Pending'
+            };
+             tasks.push(newTask);
               saveTasks();
               renderTasks();
-             taskForm.reset();
+            document.getElementById('task-form').reset();
+        });
+
+      function saveTasks() {
+        localStorage.setItem('tasks', JSON.stringify(tasks));
         }
-        taskForm.addEventListener('submit', addTask);
 
-        function renderTasks() {
-            taskList.innerHTML = '';
-           const filteredTasks = getFilteredTasks();
-
-           if(filteredTasks.length === 0) {
-             taskList.innerHTML = '<li> No tasks found.</li>';
-             return;
+      function loadTasks() {
+          const storedTasks = localStorage.getItem('tasks');
+          if (storedTasks) {
+             tasks = JSON.parse(storedTasks);
+             renderTasks();
            }
+      }
+      function renderTasks() {
+            const taskList = document.getElementById('task-list');
+            taskList.innerHTML = '';
+            const filterCategory = document.getElementById('filter-category').value;
+            const filterPriority = document.getElementById('filter-priority').value;
+             const sortBy = document.getElementById('sort-by').value;
+            let filteredTasks = [...tasks];
 
-           filteredTasks.forEach(task => {
-               const taskItem = document.createElement('li');
-                taskItem.innerHTML = `
-                    <span><strong>${task.title}</strong> - ${task.category} - ${task.priority}
-                    ${task.dueDate ? ' - Due: ' + new Date(task.dueDate).toLocaleDateString() : ''}
-                     - Status: ${task.status}
-                     ${task.description ? '<br><small>' + task.description + '</small>' : ''}
-                     </span>
-                    <div class="task-actions">
-                        <button class="edit" data-id="${task.id}">Edit</button>
-                         <button class="complete" data-id="${task.id}">Complete</button>
-                        <button data-id="${task.id}">Delete</button>
-                    </div>
-                `;
-                 taskList.appendChild(taskItem);
-           });
+             if (filterCategory) {
+                  filteredTasks = filteredTasks.filter(task => task.category === filterCategory);
+              }
 
+              if(filterPriority){
+                  filteredTasks = filteredTasks.filter(task => task.priority === filterPriority);
+              }
 
-        }
-
-        function editTask(id){
-             const taskIndex = tasks.findIndex(task => task.id === Number(id));
-              if(taskIndex === -1) { return; }
-
-
-              const task = tasks[taskIndex];
-                const title = prompt("Edit Task Title", task.title);
-                 const description = prompt("Edit Description", task.description);
-                 const category = prompt("Edit Category", task.category);
-                 const dueDate = prompt("Edit Due Date (YYYY-MM-DD)", task.dueDate);
-                const priority = prompt("Edit Priority", task.priority);
-
-
-                 if(title !== null && title.trim() !== '') {
-                     task.title = title;
-                    task.description = description;
-                     task.category = category;
-                     task.dueDate = dueDate;
-                    task.priority = priority;
-
-                     saveTasks();
-                     renderTasks();
+                if(sortBy === "dueDate"){
+                    filteredTasks.sort((a,b) => new Date(a.dueDate)-new Date(b.dueDate));
+                 }else if (sortBy === "priority"){
+                     const priorityOrder = { 'low': 1, 'medium': 2, 'high': 3 };
+                    filteredTasks.sort((a,b) => priorityOrder[b.priority] - priorityOrder[a.priority]);
                  }
 
+              filteredTasks.forEach(task => {
+                const taskItem = document.createElement('li');
+                  taskItem.classList.add('task-item');
+                  taskItem.innerHTML = `
+                    <span>${task.title}</span>
+                       <div class="task-actions">
+                       <button class="edit-btn" onclick="editTask(${task.id})">Edit</button>
+                        <button onclick="deleteTask(${task.id})">Delete</button>
+                    </div>
+                 `;
+                 taskList.appendChild(taskItem);
+              });
 
         }
 
-        function completeTask(id) {
-          const taskIndex = tasks.findIndex(task => task.id === Number(id));
-          if(taskIndex === -1) {
-              return;
-           }
-            tasks[taskIndex].status = "Completed";
+    function editTask(taskId) {
+            const task = tasks.find(task => task.id === taskId);
+            if (!task) return;
+            const taskItem = document.createElement('li');
+             taskItem.classList.add('task-item');
+               taskItem.innerHTML = `
+                   <input type="text" value="${task.title}" id="edit-title-${task.id}">
+                   <textarea id="edit-description-${task.id}">${task.description}</textarea>
+                    <input type="date" value="${task.dueDate}" id="edit-dueDate-${task.id}">
+                    <select id="edit-priority-${task.id}">
+                        <option value="low" ${task.priority === 'low' ? 'selected' : ''}>Low</option>
+                        <option value="medium" ${task.priority === 'medium' ? 'selected' : ''}>Medium</option>
+                       <option value="high" ${task.priority === 'high' ? 'selected' : ''}>High</option>
+                    </select>
+                     <select id="edit-category-${task.id}">
+                        <option value="personal" ${task.category === 'personal' ? 'selected' : ''}>Personal</option>
+                        <option value="work" ${task.category === 'work' ? 'selected' : ''}>Work</option>
+                       <option value="other" ${task.category === 'other' ? 'selected' : ''}>Other</option>
+                    </select>
+                   <div class="task-actions">
+                    <button onclick="saveEditedTask(${task.id})">Save</button>
+                    <button onclick="cancelEditTask(${task.id})">Cancel</button>
+                  </div>
+                `;
+
+           const taskElement = document.querySelector(`.task-item:has(span:contains("${task.title}"))`);
+             taskElement.replaceWith(taskItem);
+        }
+         function saveEditedTask(taskId){
+            const task = tasks.find(task => task.id === taskId);
+            if (!task) return;
+            const updatedTitle = document.getElementById(`edit-title-${taskId}`).value;
+             const updatedDescription = document.getElementById(`edit-description-${taskId}`).value;
+              const updatedDueDate = document.getElementById(`edit-dueDate-${taskId}`).value;
+              const updatedPriority = document.getElementById(`edit-priority-${taskId}`).value;
+               const updatedCategory = document.getElementById(`edit-category-${taskId}`).value;
+
+             task.title = updatedTitle;
+            task.description = updatedDescription;
+            task.dueDate = updatedDueDate;
+             task.priority = updatedPriority;
+            task.category = updatedCategory;
               saveTasks();
               renderTasks();
         }
 
-        function deleteTask(id) {
-             const taskIndex = tasks.findIndex(task => task.id === Number(id));
-              if(taskIndex !== -1) {
-                 tasks.splice(taskIndex, 1);
-                 saveTasks();
-                 renderTasks();
-             }
-
-        }
-
-
-        taskList.addEventListener('click', (event) => {
-            if(event.target.tagName === 'BUTTON'){
-                const taskId = event.target.getAttribute('data-id');
-                 if(event.target.classList.contains('edit')) {
-                       editTask(taskId);
-
-                } else if (event.target.classList.contains('complete')){
-                       completeTask(taskId);
-                }
-                else {
-                    deleteTask(taskId);
-                }
-
-            }
-
-        });
-
-    function getFilteredTasks() {
-       let filteredTasks = [...tasks];
-         if(filterCategory.value){
-             filteredTasks = filteredTasks.filter(task => task.category === filterCategory.value);
+        function cancelEditTask(taskId) {
+           renderTasks();
          }
-        if (filterPriority.value) {
-           filteredTasks = filteredTasks.filter(task => task.priority === filterPriority.value);
-        }
-        if(filterStatus.value) {
-            filteredTasks = filteredTasks.filter(task => task.status === filterStatus.value);
-        }
-           return filteredTasks;
 
-    }
+      function deleteTask(taskId) {
+           tasks = tasks.filter(task => task.id !== taskId);
+            saveTasks();
+             renderTasks();
+         }
 
-    function handleFilterChange() {
-          renderTasks();
-    }
 
-    filterCategory.addEventListener('change', handleFilterChange);
-    filterPriority.addEventListener('change', handleFilterChange);
-     filterStatus.addEventListener('change', handleFilterChange);
-
-     clearFilters.addEventListener('click', () => {
-       filterCategory.value = "";
-        filterPriority.value = "";
-        filterStatus.value = "";
-        renderTasks();
-     })
-
-    function checkNotifications() {
-        const now = new Date();
-        tasks.forEach(task => {
-           if(task.dueDate) {
-              const dueDate = new Date(task.dueDate);
-               const timeDiff = dueDate.getTime() - now.getTime();
-              const daysLeft = Math.ceil(timeDiff / (1000 * 3600 * 24));
-
-               if(daysLeft === 0) {
-                   showNotification(`Task ${task.title} is due today`);
-               }else if (daysLeft < 0 ) {
-                     showNotification(`Task ${task.title} is overdue!`);
-               }
-                else if (daysLeft <= 2){
-                     showNotification(`Task ${task.title} is due in ${daysLeft} days`);
-
-                }
-           }
-
-        });
-    }
-
+      document.getElementById('filter-category').addEventListener('change', renderTasks);
+        document.getElementById('filter-priority').addEventListener('change', renderTasks);
+        document.getElementById('sort-by').addEventListener('change', renderTasks);
 
     </script>
 </body>
 </html>
+```
