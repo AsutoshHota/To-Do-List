@@ -1,239 +1,191 @@
-json
-{
-	"nodes": [
-		{
-			"parameters": {},
-			"name": "Start",
-			"type": "n8n-nodes-base.start",
-			"typeVersion": 1,
-			"position": [
-				240,
-				300
-			]
-		},
-		{
-			"parameters": {
-				"options": {}
-			},
-			"name": "Form Input",
-			"type": "n8n-nodes-base.webhook",
-			"typeVersion": 1,
-			"position": [
-				460,
-				300
-			],
-			"webhookId": "your_unique_webhook_id"
-		},
-		{
-			"parameters": {
-				"functionCode": "const formData = $input.first().json;\n\n// Example Validation (Modify based on actual input fields)\nif(!formData.contractName || formData.contractName.trim() === '') {\n    throw new Error('Contract Name is required.');\n}\nif(!formData.clientName || formData.clientName.trim() === '') {\n    throw new Error('Client Name is required.');\n}\nif(!formData.serviceCategory || formData.serviceCategory.trim() === '') {\n    throw new Error('Service Category is required.');\n}\n\nreturn [\n  {\n    json: formData\n  }\n];"
-			},
-			"name": "Data Validation",
-			"type": "n8n-nodes-base.function",
-			"typeVersion": 1,
-			"position": [
-				720,
-				300
-			]
-		},
-		{
-			"parameters": {
-				"values": [
-					{
-						"name": "contractName",
-						"value": "={{$json.contractName}}"
-					},
-          {
-						"name": "clientName",
-						"value": "={{$json.clientName}}"
-					},
-					{
-						"name": "serviceCategory",
-						"value": "={{$json.serviceCategory}}"
-					},
-          {
-						"name": "serviceRequirements",
-						"value": "={{$json.serviceRequirements}}"
-					},
-          {
-						"name": "clientCriteria",
-						"value": "={{$json.clientCriteria}}"
-					}
-				]
-			},
-			"name": "Set Form Data",
-			"type": "n8n-nodes-base.set",
-			"typeVersion": 1,
-			"position": [
-				960,
-				300
-			]
-		},
-    {
-			"parameters": {
-				"authentication": "headerAuth",
-        "url": "https://api.example.com/historical-sow",
-        "options": {}
-			},
-			"name": "Fetch Historical SoW",
-			"type": "n8n-nodes-base.httpRequest",
-			"typeVersion": 1,
-			"position": [
-				960,
-        450
-			]
-		},
-    {
-      "parameters": {
-        "functionCode": "const historicalData = $input.item.json;\nconst formData = $input.item(0).json;\n\nlet content = '';\n\n// Example analysis of historical data and dynamic clause generation\nif(formData.serviceCategory === 'Consulting'){\n    content += '### Consulting Services Clause ###\\n';\n   // Logic to extract matching content from historicalData and insert it dynamically based on category\n}\nelse if(formData.serviceCategory === 'Development'){\n     content += '### Development Services Clause ###\\n';\n     //Logic to extract content from historical data and insert it dynamically\n}\n\n\nreturn [\n  {\n    json: {\n    ...formData,\n    historicalData: historicalData,\n    dynamicContent: content\n   }\n  }\n];"
-      },
-      "name": "Analyze Historical Data",
-      "type": "n8n-nodes-base.function",
-      "typeVersion": 1,
-      "position": [
-				1200,
-				300
-			]
-    },
-		{
-			"parameters": {
-				"documentId": "your_google_doc_template_id",
-				"templateType": "document",
-				"values": [
-					{
-						"key": "{{$json.contractName}}",
-						"value": "{{$json.contractName}}"
-					},
-          {
-						"key": "{{$json.clientName}}",
-						"value": "{{$json.clientName}}"
-					},
-          {
-            "key":"{{$json.dynamicContent}}",
-            "value": "{{$json.dynamicContent}}"
-          }
-          ,
-					{
-						"key": "{{$json.serviceRequirements}}",
-						"value": "{{$json.serviceRequirements}}"
-					},
-          {
-						"key": "{{$json.clientCriteria}}",
-						"value": "{{$json.clientCriteria}}"
-					}
 
-				],
-				"output": "create"
-			},
-			"name": "Google Docs Integration",
-			"type": "n8n-nodes-base.googleSheets",
-			"typeVersion": 1,
-			"position": [
-				1440,
-				300
-			]
-		},
-		{
-			"parameters": {
-				"toEmails": [
-					"approver@example.com"
-				],
-				"subject": "New SoW Document for Approval: {{$json.contractName}}",
-				"text": "A new Scope of Work document has been generated and requires your approval. Please review the attached document.",
-				"attachmentsUi": {
-					"attachments": [
-						{
-							"mode": "binary",
-							"binaryPropertyName": "data"
-						}
-					]
-				}
-			},
-			"name": "Email Notification",
-			"type": "n8n-nodes-base.emailSend",
-			"typeVersion": 1,
-			"position": [
-				1680,
-				300
-			]
-		},
-    {
-      "parameters": {
-        "bucket": "your_sow_archive_bucket",
-        "fileName": "sow_{{$json.contractName}}_{{$now}}.pdf",
-				"fileType": "pdf"
-			},
-      "name": "Cloud Storage Archive",
-      "type": "n8n-nodes-base.s3",
-      "typeVersion": 1,
-      "position": [
-				1680,
-				450
-			]
-    }
-	],
-	"connections": {
-		"Start": {
-			"main": [
-				[
-					"Form Input",
-					0
-				]
-			]
-		},
-		"Form Input": {
-			"main": [
-				[
-					"Data Validation",
-					0
-				]
-			]
-		},
-		"Data Validation": {
-			"main": [
-				[
-					"Set Form Data",
-					0
-				]
-			]
-		},
-    "Set Form Data": {
-      "main": [
-        [
-          "Analyze Historical Data",
-          0
-        ]
-      ]
-    },
-    "Fetch Historical SoW": {
-      "main": [
-        [
-           "Analyze Historical Data",
-          1
-        ]
-      ]
-    },
-    "Analyze Historical Data":{
-      "main":[
-        [
-          "Google Docs Integration",
-          0
-        ]
-      ]
-    },
-		"Google Docs Integration": {
-			"main": [
-				[
-					"Email Notification",
-					0
-				],
-        [
-          "Cloud Storage Archive",
-          0
-        ]
-			]
-		}
-	}
-}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do List</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+        input[type="text"] {
+            padding: 10px;
+            margin-right: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        .task-list {
+            list-style: none;
+            padding: 0;
+            margin-top: 20px;
+        }
+        .task-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            margin-bottom: 5px;
+            background-color: #f9f9f9;
+            border: 1px solid #eee;
+            border-radius: 4px;
+        }
+        .task-item.completed {
+            background-color: #e6f7e6;
+            text-decoration: line-through;
+            color: #888;
+        }
+        .task-actions button {
+           margin-left: 5px;
+            padding: 5px 10px;
+        }
+        .task-actions button:first-child {
+          margin-left: 0;
+        }
+        @media (max-width: 768px) {
+            .container {
+                width: 95%;
+            }
+            input[type="text"] {
+               width: 60%;
+                margin-bottom: 10px;
+           }
+           .task-item {
+             flex-direction: column;
+             align-items: flex-start;
+           }
+           .task-actions {
+               margin-top: 10px;
+               margin-bottom: 5px;
+           }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>To-Do List</h1>
+        <div>
+            <input type="text" id="newTask" placeholder="Add new task">
+            <button onclick="addTask()">Add</button>
+        </div>
+        <ul class="task-list" id="taskList">
+           <!-- Task items will be added here by JavaScript -->
+        </ul>
+    </div>
+    <script>
+        let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+        const taskList = document.getElementById('taskList');
+        const newTaskInput = document.getElementById('newTask');
+
+        function renderTasks() {
+            taskList.innerHTML = '';
+            tasks.forEach((task, index) => {
+                const taskItem = document.createElement('li');
+                taskItem.classList.add('task-item');
+                if (task.completed) {
+                    taskItem.classList.add('completed');
+                }
+
+                taskItem.innerHTML = `
+                    <span>${task.description}</span>
+                     <div class="task-actions">
+                        <button onclick="toggleComplete(${index})">${task.completed ? 'Unmark' : 'Mark'}</button>
+                        <button onclick="editTask(${index})">Edit</button>
+                         <button onclick="deleteTask(${index})">Delete</button>
+                     </div>
+                   `;
+
+                taskList.appendChild(taskItem);
+            });
+        }
+
+        function addTask() {
+            const newTaskDescription = newTaskInput.value.trim();
+            if (newTaskDescription) {
+                tasks.push({ description: newTaskDescription, completed: false });
+                newTaskInput.value = '';
+                updateLocalStorage();
+                renderTasks();
+            }
+        }
+
+         function toggleComplete(index) {
+             tasks[index].completed = !tasks[index].completed;
+             updateLocalStorage();
+             renderTasks();
+        }
+       function editTask(index) {
+            const taskItem = taskList.children[index];
+            const taskTextSpan = taskItem.querySelector('span');
+            const currentTaskText = taskTextSpan.textContent;
+
+            const editInput = document.createElement('input');
+            editInput.type = 'text';
+            editInput.value = currentTaskText;
+            taskTextSpan.replaceWith(editInput);
+            editInput.focus();
+
+            const saveEdit = () => {
+                 const newText = editInput.value.trim();
+                 if(newText) {
+                      tasks[index].description = newText;
+                      updateLocalStorage();
+                      renderTasks();
+                 }
+                else{
+                  taskTextSpan.textContent = currentTaskText;
+                  editInput.replaceWith(taskTextSpan);
+                }
+            };
+          editInput.addEventListener('blur',saveEdit);
+          editInput.addEventListener('keydown', (event)=>{
+            if(event.key === 'Enter'){
+             saveEdit();
+            }
+          })
+
+        }
+        function deleteTask(index) {
+           tasks.splice(index, 1);
+            updateLocalStorage();
+           renderTasks();
+        }
+        function updateLocalStorage() {
+            localStorage.setItem('tasks', JSON.stringify(tasks));
+        }
+
+         renderTasks();
+    </script>
+</body>
+</html>
 
 
